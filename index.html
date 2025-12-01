@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Happy New Month!</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    html, body {
+      margin: 0;
+      height: 100%;
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: #fff;
+      overflow: hidden;
+    }
+    .center {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+    button {
+      padding: 10px 20px;
+      margin-top: 15px;
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    canvas {
+      position: fixed;
+      top: 0; left: 0;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="confetti"></canvas>
+
+<div class="center">
+  <h1>Happy New Month to You! 🎉</h1>
+  <p>Wishing you joy and success this month.</p>
+  <button onclick="burst()">Celebrate</button>
+</div>
+
+<script>
+  const canvas = document.getElementById("confetti");
+  const ctx = canvas.getContext("2d");
+
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resizeCanvas();
+  window.onresize = resizeCanvas;
+
+  const particles = [];
+
+  function random(min, max) {
+    return Math.random() * (max - min) + min;
+  }
+
+  function createParticle() {
+    return {
+      x: canvas.width / 2,
+      y: canvas.height / 3,
+      size: random(5, 10),
+      color: `hsl(${random(0, 360)}, 80%, 60%)`,
+      vx: random(-3, 3),
+      vy: random(-7, -3),
+      gravity: 0.15,
+      drag: 0.98,
+      life: random(60, 120)
+    };
+  }
+
+  function burst() {
+    for (let i = 0; i < 100; i++) particles.push(createParticle());
+  }
+
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    particles.forEach((p, index) => {
+      p.vx *= p.drag;
+      p.vy += p.gravity;
+      p.x += p.vx;
+      p.y += p.vy;
+      p.life--;
+
+      ctx.fillStyle = p.color;
+      ctx.fillRect(p.x, p.y, p.size, p.size);
+
+      if (p.life <= 0 || p.y > canvas.height) {
+        particles.splice(index, 1);
+      }
+    });
+
+    requestAnimationFrame(animate);
+  }
+
+  burst();
+  animate();
+</script>
+
+</body>
+</html>
